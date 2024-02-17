@@ -1,7 +1,26 @@
 const fs = require("fs");
 const fsPromises = fs.promises;
 (async () => {
+  // createing a function for file creation
+
+  const createANewFile = async (path) => {
+    try {
+      // we want to check whether or not we already have the file
+      const existingFileHandle = await fsPromises.open(path, "r");
+      existingFileHandle.close();
+      // we already have the file
+      return console.log(`The file ${path} already exists`);
+    } catch (error) {
+      // we dont have the file file we should create it
+      const newFileHandle = await fsPromises.open(path, "w");
+      console.log(`A new file was successfully created`);
+      newFileHandle.close();
+    }
+  };
+
   const commandFileHandler = await fsPromises.open("./command.txt", "r");
+  // commands
+  const CREATE_FILE = "create a new file";
 
   commandFileHandler.on("change", async () => {
     // get the sze of outr file
@@ -17,13 +36,13 @@ const fsPromises = fs.promises;
     const position = 0;
 
     // read the contents of the file
-    const content = await commandFileHandler.read(
-      buff,
-      offset,
-      length,
-      position
-    );
-    console.log("content is", content);
+    await commandFileHandler.read(buff, offset, length, position);
+    const command = buff.toString("utf-8");
+
+    if (command.includes(CREATE_FILE)) {
+      const filePath = command.substring(CREATE_FILE.length + 1);
+      createANewFile(filePath);
+    }
   });
 
   //watcher...

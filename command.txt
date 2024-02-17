@@ -1,1 +1,1 @@
-new content
+create a new file E:\test/husnain.js
