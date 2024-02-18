@@ -1,8 +1,11 @@
 const fs = require("fs");
 const fsPromises = fs.promises;
 (async () => {
-  // createing a function for file creation
+  // commands
+  const CREATE_FILE = "create a file";
+  const DELETE_FILE = "delete a file";
 
+  // createing a function for file creation
   const createANewFile = async (path) => {
     try {
       // we want to check whether or not we already have the file
@@ -18,9 +21,23 @@ const fsPromises = fs.promises;
     }
   };
 
+  // creating a function for deleting the file
+
+  const deleteFile = async (path) => {
+    try {
+      await fsPromises.unlink(path);
+      console.log("file is deleted successfully");
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        console.log("No file at this path to remove");
+      } else {
+        console.log("An error occured while removing the file");
+        console.log(error);
+      }
+    }
+  };
+
   const commandFileHandler = await fsPromises.open("./command.txt", "r");
-  // commands
-  const CREATE_FILE = "create a new file";
 
   commandFileHandler.on("change", async () => {
     // get the sze of outr file
@@ -42,6 +59,11 @@ const fsPromises = fs.promises;
     if (command.includes(CREATE_FILE)) {
       const filePath = command.substring(CREATE_FILE.length + 1);
       createANewFile(filePath);
+    }
+
+    if (command.includes(DELETE_FILE)) {
+      const filePath = command.substring(DELETE_FILE.length + 1);
+      deleteFile(filePath);
     }
   });
 

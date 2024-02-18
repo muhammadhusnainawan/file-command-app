@@ -1,1 +1,1 @@
-create a new file E:\test/husnain.js
+delete a file husnain.js
