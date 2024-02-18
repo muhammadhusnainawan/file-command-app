@@ -4,6 +4,7 @@ const fsPromises = fs.promises;
   // commands
   const CREATE_FILE = "create a file";
   const DELETE_FILE = "delete a file";
+  const RENAME_FILE = "rename a file";
 
   // createing a function for file creation
   const createANewFile = async (path) => {
@@ -37,6 +38,12 @@ const fsPromises = fs.promises;
     }
   };
 
+  // creaing a function for renaming a file
+
+  const renameFile = async(oldPath, newPath)=>{
+
+  }
+
   const commandFileHandler = await fsPromises.open("./command.txt", "r");
 
   commandFileHandler.on("change", async () => {
@@ -64,6 +71,12 @@ const fsPromises = fs.promises;
     if (command.includes(DELETE_FILE)) {
       const filePath = command.substring(DELETE_FILE.length + 1);
       deleteFile(filePath);
+    }
+
+    if (command.includes(RENAME_FILE)) {
+      const oldPath = command.substring(RENAME_FILE.length + 1)
+      const _idx =  command.indexOf(" to ")
+      const newPath =  command.substring()
     }
   });
 
