@@ -1,1 +1,1 @@
-delete a file husnain.js
+add to file husnain.txt this content: Hi

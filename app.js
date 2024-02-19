@@ -5,6 +5,7 @@ const fsPromises = fs.promises;
   const CREATE_FILE = "create a file";
   const DELETE_FILE = "delete a file";
   const RENAME_FILE = "rename a file";
+  const ADD_TO_FILE = "add to file";
 
   // createing a function for file creation
   const createANewFile = async (path) => {
@@ -40,9 +41,35 @@ const fsPromises = fs.promises;
 
   // creaing a function for renaming a file
 
-  const renameFile = async(oldPath, newPath)=>{
+  const renameFile = async (path, newPath) => {
+    try {
+      await fsPromises.rename(path, newPath);
+      console.log(
+        `File name changed from ${path} to new ${newPath} successfully`
+      );
+    } catch (error) {
+      if (error.code === "ENOENT") {
+        console.log("No file of this path to rename or the estination exists");
+      } else {
+        console.log("An error occured while renaming the file");
+        console.log(error);
+      }
+    }
+  };
 
-  }
+  // creating a function for adding content to file
+    let addedContent;
+    const addToFile = async (path, content)=>{
+      if (addedContent === content) return ;
+        try {
+       const fileHandle =    await fsPromises.open(path, "a")
+          fileHandle.write(content)
+          addedContent = content
+        } 
+        catch (error) {
+          console.log(error);
+        }
+    }
 
   const commandFileHandler = await fsPromises.open("./command.txt", "r");
 
@@ -62,21 +89,32 @@ const fsPromises = fs.promises;
     // read the contents of the file
     await commandFileHandler.read(buff, offset, length, position);
     const command = buff.toString("utf-8");
-
+// creating file
     if (command.includes(CREATE_FILE)) {
       const filePath = command.substring(CREATE_FILE.length + 1);
       createANewFile(filePath);
     }
-
+//deleting file
     if (command.includes(DELETE_FILE)) {
       const filePath = command.substring(DELETE_FILE.length + 1);
       deleteFile(filePath);
     }
-
+// renaming file
     if (command.includes(RENAME_FILE)) {
-      const oldPath = command.substring(RENAME_FILE.length + 1)
-      const _idx =  command.indexOf(" to ")
-      const newPath =  command.substring()
+      const _idx = command.indexOf(" to ");
+      //console.log(_idx);
+      const oldPath = command.substring(RENAME_FILE.length + 1, _idx);
+      //console.log(oldPath);
+      const newPath = command.substring(_idx + 4);
+      //console.log(newPath);
+      renameFile(oldPath, newPath);
+    }
+    // adding content to file
+    if (command.includes(ADD_TO_FILE)) {
+      const _idx = command.indexOf(" this content: ")
+      const path = command.substring(ADD_TO_FILE.length + 1, _idx)
+      const content = command.substring(_idx + 15 )
+      addToFile(path, content)
     }
   });
 
